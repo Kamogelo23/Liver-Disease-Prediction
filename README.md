@@ -5,9 +5,9 @@ Data Loading and Exploration: Reads the dataset "hcvdat0.csv" containing 615 obs
 
 Package Installation and Library Loading: Installs and loads various packages required for data analysis, visualization, and modeling.
 
-Data Cleaning: Identifies and handles missing values through imputation using predictive mean matching, and normalizes features using Z-score normalization. Outliers are also handled using Cook's distance.
+# Data Cleaning: Identifies and handles missing values through imputation using predictive mean matching, and normalizes features using Z-score normalization. Outliers are also handled using Cook's distance.
 
-Exploratory Data Analysis (EDA): Includes histograms, box plots, and summary statistics to understand the distribution and characteristics of the data.
+# Exploratory Data Analysis (EDA): Includes histograms, box plots, and summary statistics to understand the distribution and characteristics of the data.
 
 Variable Selection: Performs Principal Component Analysis (PCA) and feature plotting to select significant variables.
 
