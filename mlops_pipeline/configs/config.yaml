@@ -1,0 +1,162 @@
+# MLOps Pipeline Configuration
+# Liver Disease Prediction - Production Configuration
+
+# Data Configuration
+data:
+  raw_data_path: "data/raw/"
+  processed_data_path: "data/processed/"
+  feature_store_path: "feature_store/"
+  train_data_path: "data/train/"
+  test_data_path: "data/test/"
+  validation_data_path: "data/validation/"
+
+# Model Configuration
+model:
+  name: "liver_disease_classifier"
+  version: "1.0.0"
+  algorithms:
+    - "random_forest"
+    - "gradient_boosting"
+    - "svm"
+    - "neural_network"
+  hyperparameters:
+    random_forest:
+      n_estimators: [50, 100, 200]
+      max_depth: [10, 20, 30, null]
+      min_samples_split: [2, 5, 10]
+      min_samples_leaf: [1, 2, 4]
+    gradient_boosting:
+      n_estimators: [50, 100, 200]
+      learning_rate: [0.01, 0.1, 0.2]
+      max_depth: [3, 5, 7]
+    svm:
+      C: [0.1, 1, 10, 100]
+      gamma: ["scale", "auto", 0.001, 0.01, 0.1]
+      kernel: ["rbf", "linear", "poly"]
+  target_metric: "accuracy"
+  validation_strategy: "cross_validation"
+  cv_folds: 5
+  test_size: 0.2
+  random_state: 42
+
+# Feature Engineering Configuration
+features:
+  categorical_features:
+    - "Sex"
+  numerical_features:
+    - "Age"
+    - "ALB"
+    - "ALP"
+    - "ALT"
+    - "AST"
+    - "BIL"
+    - "CHE"
+    - "CHOL"
+    - "CREA"
+    - "GGT"
+    - "PROT"
+  target_column: "Category"
+  feature_selection:
+    method: "mutual_information"
+    k_best: 10
+  scaling:
+    method: "standard"
+    fit_on_train: true
+
+# Data Quality Configuration
+data_quality:
+  missing_value_threshold: 0.1
+  outlier_detection:
+    method: "isolation_forest"
+    contamination: 0.1
+  data_drift:
+    detection_method: "ks_test"
+    threshold: 0.05
+    reference_window: 1000
+  schema_validation:
+    enabled: true
+    strict_mode: false
+
+# MLOps Configuration
+mlops:
+  experiment_tracking:
+    backend: "mlflow"
+    tracking_uri: "http://localhost:5000"
+    experiment_name: "liver_disease_prediction"
+  
+  model_registry:
+    backend: "mlflow"
+    registry_uri: "http://localhost:5000"
+    model_stage: "Production"
+  
+  model_monitoring:
+    enabled: true
+    drift_detection:
+      enabled: true
+      threshold: 0.05
+      window_size: 100
+    performance_monitoring:
+      enabled: true
+      metrics: ["accuracy", "precision", "recall", "f1_score"]
+      alert_threshold: 0.05
+  
+  retraining:
+    enabled: true
+    schedule: "0 2 * * 1"  # Weekly on Monday at 2 AM
+    trigger_conditions:
+      - "data_drift"
+      - "performance_degradation"
+      - "new_data_available"
+
+# API Configuration
+api:
+  host: "0.0.0.0"
+  port: 8000
+  workers: 4
+  timeout: 30
+  max_request_size: 10485760  # 10MB
+  rate_limit: 100  # requests per minute
+  
+# Deployment Configuration
+deployment:
+  environment: "production"
+  container:
+    base_image: "python:3.9-slim"
+    requirements_file: "requirements_mlops.txt"
+  health_check:
+    enabled: true
+    endpoint: "/health"
+    interval: 30
+  scaling:
+    min_replicas: 2
+    max_replicas: 10
+    target_cpu: 70
+
+# Logging Configuration
+logging:
+  level: "INFO"
+  format: "json"
+  handlers:
+    - "console"
+    - "file"
+  log_file: "logs/mlops_pipeline.log"
+  max_file_size: "10MB"
+  backup_count: 5
+
+# Monitoring and Alerting
+monitoring:
+  metrics:
+    - "model_accuracy"
+    - "prediction_latency"
+    - "data_quality_score"
+    - "feature_drift_score"
+  alerts:
+    email:
+      enabled: true
+      recipients: ["data-team@company.com"]
+    slack:
+      enabled: true
+      webhook_url: "${SLACK_WEBHOOK_URL}"
+  dashboard:
+    enabled: true
+    refresh_interval: 60
